@@ -3,13 +3,13 @@ import requests
 import xml.etree.ElementTree as ET
 
 
-def loadRSS():
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    url = 'https://www.hindustantimes.com/feeds/rss/advertorial/rssfeed.xml'
-    resp = requests.get(url, headers=headers)
-    print(resp.status_code)
-    with open('advertorial.xml', 'wb') as f:
-        f.write(resp.content)
+# def loadRSS():
+#     # headers = {'User-Agent': 'Mozilla/5.0'}
+#     # url = 'https://www.hindustantimes.com/feeds/rss/advertorial/rssfeed.xml'
+#     # resp = requests.get(url, headers=headers)
+#     # print(resp.status_code)
+#     with open('advertorial.xml', 'rb') as f:
+
 
 
 def parseXML(xmlfile):
@@ -21,6 +21,7 @@ def parseXML(xmlfile):
         for child in item:
             if child.tag == '{http://search.yahoo.com/mrss/}content':
                 news['media'] = child.attrib['url']
+
             else:
                 news[child.tag] = child.text.encode('utf-8')
         newsitems.append(news)
@@ -28,7 +29,7 @@ def parseXML(xmlfile):
 
 
 def savetoCsv(newsitems, filename):
-    fields = ['title', '', '', '']
+    fields = ['pubDate', 'title', 'link', 'media', 'guid', 'description']
     with open(filename, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fields)
         writer.writeheader()
@@ -36,7 +37,7 @@ def savetoCsv(newsitems, filename):
 
 
 def main():
-    loadRSS()
+    # loadRSS()
     newsitem = parseXML('advertorial.xml')
     savetoCsv(newsitem, 'top.csv')
 
